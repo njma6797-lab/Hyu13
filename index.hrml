@@ -1,1 +1,104 @@
 
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>AI System</title>
+
+<style>
+body{
+  margin:0;height:100vh;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#020617,#000814);
+  color:#e5e7eb;font-family:"Segoe UI",Arial;overflow:hidden;
+}
+.container{display:flex;flex-direction:column;align-items:center;gap:18px}
+.loader{
+  width:96px;height:96px;border:6px solid rgba(16,185,129,.25);
+  border-top:6px solid #10b981;border-radius:50%;
+  animation:spin 1s linear infinite;box-shadow:0 0 24px rgba(16,185,129,.6)
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.text{letter-spacing:1px;color:#a7f3d0;min-height:24px;text-align:center}
+
+.activate{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(2,6,23,.85);backdrop-filter:blur(4px);cursor:pointer
+}
+.activate span{
+  padding:14px 34px;border-radius:30px;
+  background:linear-gradient(135deg,#10b981,#22c55e);
+  color:#020617;box-shadow:0 0 28px rgba(16,185,129,.8)
+}
+
+.lines{
+  position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(
+    to bottom, rgba(255,255,255,.03), rgba(255,255,255,.03) 1px,
+    transparent 1px, transparent 4px);
+}
+
+.shake{animation:shake .15s linear 6}
+@keyframes shake{
+  0%{transform:translate(0)}25%{transform:translate(3px)}
+  50%{transform:translate(-3px)}75%{transform:translate(3px)}100%{transform:translate(0)}
+}
+
+.success{
+  background:linear-gradient(135deg,#064e3b,#020617)!important
+}
+</style>
+</head>
+
+<body>
+
+<div class="lines"></div>
+
+<div class="container">
+  <div class="loader"></div>
+  <div class="text" id="text">جاري فحص البيانات...</div>
+</div>
+
+<div class="activate" id="activate" onclick="activate()">
+  <span>انقر لتفعيل النظام</span>
+</div>
+
+<script>
+const spokenText =
+"تم التعرف عليه أحمد راتب، محافظة البحيرة، مدينة المحمودية، عزبة كومبو، المهنة عاطل، السن تسعة عشر، أعزب، وتم التأكد أنك مؤهل لدخول الموقع، تمت العملية بنجاح";
+
+function activate(){
+  document.getElementById('activate').style.display='none';
+  setTimeout(runSequence,5000);
+}
+
+function typeText(el, text, speed=35){
+  el.innerText=""; let i=0;
+  const t=setInterval(()=>{
+    el.innerText+=text[i++]||"";
+    if(i>text.length) clearInterval(t);
+  },speed);
+}
+
+function runSequence(){
+  document.querySelector('.loader').style.display='none';
+  const t=document.getElementById('text');
+
+  typeText(t,"تحليل الهوية... مطابقة السجلات...",30);
+
+  setTimeout(()=>{
+    document.body.classList.add('shake');
+  },1200);
+
+  setTimeout(()=>{
+    document.body.classList.add('success');
+    const msg=new SpeechSynthesisUtterance(spokenText);
+    msg.lang="ar-EG";
+    msg.rate=0.9;
+    speechSynthesis.speak(msg);
+    typeText(t,"تم القبول — العملية تمت بنجاح",40);
+  },2200);
+}
+</script>
+
+</body>
+</html>
